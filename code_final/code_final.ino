@@ -31,6 +31,7 @@ int delay_upper = 1800;
 int delay_lower = 1500;
 
 int delay_game_2 = 800;
+int wait_time = 3000; 
 
 int total_c = 3;
 int sequence[3];
@@ -208,14 +209,15 @@ void display_sequence(){
 }
 
 void check_sequence(){
-  int wait = 500; 
+  int wait = 500;
   int count=0;
   int old_1 = 0, new_1 = 0;
   int old_2 = 0, new_2 = 0;
   int old_3 = 0, new_3 = 0;
   int old_4 = 0, new_4 = 0;
+  long st_time = millis();
   long st = millis()+100;
-  while(count< total_c){
+  while(count< total_c && millis() -  st_time < wait_time){
     if(digitalRead(on_off) != LOW){
       if(digitalRead(game_option) == LOW){
         game1();
@@ -289,7 +291,7 @@ void check_sequence(){
         continue;
       }
       else {
-        score = score - 5;
+        score = score - 1 - count;
         if(score < 0 ){
           score = 0;
         }
@@ -299,7 +301,14 @@ void check_sequence(){
         return;
     }
     }
-    
+  }
+  if(count< total_c ) {
+      score = score - 2 - count;
+      if(score < 0 ){
+        score = 0;
+      }
+      printScore();
+      wrongtap();
   }
   if( delay_game_2 > 700){
     delay_game_2 = delay_lower - 70;
@@ -308,6 +317,15 @@ void check_sequence(){
     delay_lower = delay_lower - 50;
   }
   else if( delay_lower >= 250){
+    delay_lower = delay_lower - 30;
+  }
+  if( wait_time > 2000){
+    wait_time = wait_time - 60;
+  }
+  else if( wait_time >= 1500){
+    delay_lower = delay_lower - 50;
+  }
+  else if( delay_lower >= 1300){
     delay_lower = delay_lower - 30;
   }
 }
